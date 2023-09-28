@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "桌球王",
+  "name": "桌球王@15thIT",
   "icons": [
     {
       "src": "favicon.ico",
@@ -16,7 +16,32 @@
       "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
-    }
+    },
+    {
+      "src": "icon@x48.png",
+      "type": "image/png",
+      "sizes": "48 × 48"
+    },
+    {
+      "src": "icon@96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "icon@144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "icon@192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon@512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }    
   ],
   "start_url": ".",
   "display": "standalone",
