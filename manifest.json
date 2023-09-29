@@ -18,27 +18,27 @@
       "sizes": "512x512"
     },
     {
-      "src": "icon@x48.png",
+      "src": "icon2@x48.png",
       "type": "image/png",
       "sizes": "48 × 48"
     },
     {
-      "src": "icon@96.png",
+      "src": "icon2@96.png",
       "type": "image/png",
       "sizes": "96x96"
     },
     {
-      "src": "icon@144.png",
+      "src": "icon2@144.png",
       "type": "image/png",
       "sizes": "144x144"
     },
     {
-      "src": "icon@192.png",
+      "src": "icon2@192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "icon@512.png",
+      "src": "icon2@512.png",
       "type": "image/png",
       "sizes": "512x512"
     }    
