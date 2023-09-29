@@ -99,7 +99,7 @@ function App() {
               />
             </div>
 
-            <div style={{ width: "20%", textAlign: "left" }}>
+            <div style={{ width: "100%"}}>
               <div style={{ display: "inline-block" }}>隊名:&nbsp;</div>
               <div style={{ display: "inline-block" }}>
                 <Input showCount maxLength={20} onChange={onChange} />
