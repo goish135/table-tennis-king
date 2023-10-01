@@ -7,46 +7,67 @@ import { PrinterOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
 
 function App() {
-  const [count, setCount] = useState(0);
+  
   const data = [];
   const [dataSource, setDataSource] = useState(data);
   let componentRef = useRef();
 
   const handleAdd = () => {
+
+    let initMax = 0
+
+    
+
+    for(let i=0;i<dataSource.length;i++){
+      initMax = Math.max(initMax,dataSource[i].no);
+    }
+
     const newData = {
-      key: count,
-      no: ``,
+      key: Math.random(),
+      no: initMax+1,
       name: ``,
       action: <a>Delete</a>,
     };
     setDataSource([...dataSource, newData]);
+    
 
-    setCount(count + 1);
+    
   };
 
   const handleAdd2 = () => {
+    
+
+    let initMax = 0
+
+      for(let i=0;i<dataSource.length;i++){
+        initMax = Math.max(initMax,dataSource[i].no);
+      }
+
+    var copiedDataSource = dataSource.slice();  
     const newData1 = {
-      key: count,
-      no: ``,
+      key: Math.random(),
+      no: initMax+1,
       name: ``,
       action: <a>Delete</a>,
     };
     const newData2 = {
-      key: count + 1,
-      no: ``,
+      key: Math.random(),
+      no: initMax+1,
       name: ``,
       action: <a>Delete</a>,
     };
-    var copiedDataSource = dataSource.slice();
+    
     copiedDataSource.push(newData1, newData2);
     setDataSource(copiedDataSource);
 
-    setCount(count + 1);
   };
 
-  const handleDelete = (key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
+  const handleDelete = (no) => {
+    
+    const oriData = dataSource.length;
+    const newData = dataSource.filter((item) => item.no !== no);
 
+    
     setDataSource(newData);
   };
 
@@ -71,7 +92,7 @@ function App() {
       key: "action",
       render: (_, record) =>
         dataSource.length >= 1 ? (
-          <a onClick={() => handleDelete(record.key)}>Delete</a>
+          <a onClick={() => handleDelete(record.no)}>Delete</a>
         ) : null,
     },
   ];
