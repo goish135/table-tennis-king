@@ -64,7 +64,7 @@ function App() {
 
   const handleDelete = (no) => {
     
-    const oriData = dataSource.length;
+    
     const newData = dataSource.filter((item) => item.no !== no);
 
     
