@@ -7,79 +7,90 @@ import { PrinterOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
 
 function App() {
-  
   const data = [];
   const [dataSource, setDataSource] = useState(data);
-  const [hideAction,setHideAction] = useState(false);
-  const [hideShowText,setHideShowText] = useState("Hide");
+  const [hideAction, setHideAction] = useState(false);
+  const [hideShowText, setHideShowText] = useState("Hide");
+  const [headOfRowSpan,setHeadOfRowSpan] = useState([]);
   let componentRef = useRef();
 
   const onHide = () => {
     console.log("click Hide");
-    if(hideAction){
-      setHideShowText("Hide")
-    }else{
-      setHideShowText("Show")
+    if (hideAction) {
+      setHideShowText("Hide");
+    } else {
+      setHideShowText("Show");
     }
     setHideAction(!hideAction);
-  }
+  };
 
   const handleAdd = () => {
+    let initMax = 0;
 
-    let initMax = 0
-
-    
-
-    for(let i=0;i<dataSource.length;i++){
-      initMax = Math.max(initMax,dataSource[i].no);
+    for (let i = 0; i < dataSource.length; i++) {
+      initMax = Math.max(initMax, dataSource[i].no);
     }
 
     const newData = {
       key: Math.random(),
-      no: initMax+1,
+      no: initMax + 1,
       name: ``,
       action: <a>Delete</a>,
     };
     setDataSource([...dataSource, newData]);
-    
-
-    
   };
 
   const handleAdd2 = () => {
-    
+    let initMax = 0;
 
-    let initMax = 0
+    for (let i = 0; i < dataSource.length; i++) {
+      initMax = Math.max(initMax, dataSource[i].no);
+    }
 
-      for(let i=0;i<dataSource.length;i++){
-        initMax = Math.max(initMax,dataSource[i].no);
-      }
-
-    var copiedDataSource = dataSource.slice();  
+    var copiedDataSource = dataSource.slice();
     const newData1 = {
       key: Math.random(),
-      no: initMax+1,
+      no: initMax + 1,
       name: ``,
       action: <a>Delete</a>,
     };
     const newData2 = {
       key: Math.random(),
-      no: initMax+1,
+      no: initMax + 1,
       name: ``,
       action: <a>Delete</a>,
     };
-    
-    copiedDataSource.push(newData1, newData2);
-    setDataSource(copiedDataSource);
 
+    copiedDataSource.push(newData1, newData2);
+    console.log('copiedDataSource length:',copiedDataSource.length);
+
+    setHeadOfRowSpan([...headOfRowSpan,copiedDataSource.length-2])
+    console.log("headOfRowSpan:",[...headOfRowSpan,copiedDataSource.length-2]);
+    setDataSource(copiedDataSource);
   };
 
-  const handleDelete = (no) => {
-    
-    
+  const handleDelete = (no,index) => {
+    console.log("delete Index:",index);
+    if(headOfRowSpan.includes(index) ){
+
+      const elementToRemove = index;
+      const newArray = headOfRowSpan.filter(item => item !== elementToRemove);
+      console.log("new HeadOfRowSpan#1:",newArray);
+      setHeadOfRowSpan(newArray);
+
+    }
+
+    if(headOfRowSpan.includes(index-1) ){
+
+      const elementToRemove = index-1;
+      const newArray = headOfRowSpan.filter(item => item !== elementToRemove);
+      console.log("new HeadOfRowSpan#2:",newArray);
+      setHeadOfRowSpan(newArray);
+
+    }
+
     const newData = dataSource.filter((item) => item.no !== no);
 
-    
     setDataSource(newData);
   };
 
@@ -92,6 +103,20 @@ function App() {
       title: "No#",
       dataIndex: "no",
       key: "no",
+      onCell: (_, index) => {
+        if (headOfRowSpan.includes(index)) {
+          return {
+            rowSpan: 2,
+          };
+        }
+        // These two are merged into above cell
+        if (headOfRowSpan.includes(index-1)) {
+          return {
+            rowSpan: 0,
+          };
+        }
+        return {};
+      },      
     },
     {
       title: "Name",
@@ -102,13 +127,13 @@ function App() {
       title: "Action",
       dataIndex: "action",
       key: "action",
-      render: (_, record) =>
+      render: (_, record,index) =>
         dataSource.length >= 1 ? (
-          <a onClick={() => handleDelete(record.no)}>Delete</a>
+          <a onClick={() => handleDelete(record.no,index)}>Delete</a>
         ) : null,
-      hidden: hideAction  
+      hidden: hideAction,
     },
-  ].filter(item=>!item.hidden);
+  ].filter((item) => !item.hidden);
 
   return (
     <div className="App">
@@ -132,10 +157,17 @@ function App() {
           <Content className="site-layout" style={{ padding: "0 50px" }}>
             <div style={{ padding: 24, height: "100%" }}>
               <div style={{ display: "block", textAlign: "right" }}>
-                <Button type="dashed" onClick={onHide}>{hideShowText}</Button>
+                <Button type="dashed" onClick={onHide}>
+                  {hideShowText}
+                </Button>
                 <ReactToPrint
                   trigger={() => (
-                    <Button style={{ marginLeft: 6 }} icon={<PrinterOutlined />}>Print</Button>
+                    <Button
+                      style={{ marginLeft: 6 }}
+                      icon={<PrinterOutlined />}
+                    >
+                      Print
+                    </Button>
                   )}
                   content={() => componentRef}
                 />
