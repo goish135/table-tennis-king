@@ -10,7 +10,19 @@ function App() {
   
   const data = [];
   const [dataSource, setDataSource] = useState(data);
+  const [hideAction,setHideAction] = useState(false);
+  const [hideShowText,setHideShowText] = useState("Hide");
   let componentRef = useRef();
+
+  const onHide = () => {
+    console.log("click Hide");
+    if(hideAction){
+      setHideShowText("Hide")
+    }else{
+      setHideShowText("Show")
+    }
+    setHideAction(!hideAction);
+  }
 
   const handleAdd = () => {
 
@@ -94,8 +106,9 @@ function App() {
         dataSource.length >= 1 ? (
           <a onClick={() => handleDelete(record.no)}>Delete</a>
         ) : null,
+      hidden: hideAction  
     },
-  ];
+  ].filter(item=>!item.hidden);
 
   return (
     <div className="App">
@@ -119,9 +132,10 @@ function App() {
           <Content className="site-layout" style={{ padding: "0 50px" }}>
             <div style={{ padding: 24, height: "100%" }}>
               <div style={{ display: "block", textAlign: "right" }}>
+                <Button type="dashed" onClick={onHide}>{hideShowText}</Button>
                 <ReactToPrint
                   trigger={() => (
-                    <Button icon={<PrinterOutlined />}>Print</Button>
+                    <Button style={{ marginLeft: 6 }} icon={<PrinterOutlined />}>Print</Button>
                   )}
                   content={() => componentRef}
                 />
