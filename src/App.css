@@ -38,3 +38,11 @@
     transform: rotate(360deg);
   }
 }
+
+.py-style-1 .ant-table-tbody > tr > td {
+  padding: 50px;
+}
+
+.py-style-2 .ant-table-tbody > tr > td {
+  padding: 20px;
+}

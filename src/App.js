@@ -1,5 +1,5 @@
 import "./App.css";
-import { Table, Button, Layout, Input, ConfigProvider } from "antd";
+import { Table, Button, Layout, Input, ConfigProvider, Radio } from "antd";
 import React, { useState, useRef } from "react";
 import ReactToPrint from "react-to-print";
 import { PrinterOutlined } from "@ant-design/icons";
@@ -11,8 +11,20 @@ function App() {
   const [dataSource, setDataSource] = useState(data);
   const [hideAction, setHideAction] = useState(false);
   const [hideShowText, setHideShowText] = useState("Hide");
-  const [headOfRowSpan,setHeadOfRowSpan] = useState([]);
+  const [headOfRowSpan, setHeadOfRowSpan] = useState([]);
+  const [customStyle, setCustomStyle] = useState("py-style-2");
+  const [size, setSize] = useState("small");
+
   let componentRef = useRef();
+
+  const handleSizeChange = (e) => {
+    setSize(e.target.value);
+    if (e.target.value === "small") {
+      setCustomStyle("py-style-2");
+    } else {
+      setCustomStyle("py-style-1");
+    }
+  };
 
   const onHide = () => {
     console.log("click Hide");
@@ -62,31 +74,30 @@ function App() {
     };
 
     copiedDataSource.push(newData1, newData2);
-    console.log('copiedDataSource length:',copiedDataSource.length);
+    console.log("copiedDataSource length:", copiedDataSource.length);
 
-    setHeadOfRowSpan([...headOfRowSpan,copiedDataSource.length-2])
-    console.log("headOfRowSpan:",[...headOfRowSpan,copiedDataSource.length-2]);
+    setHeadOfRowSpan([...headOfRowSpan, copiedDataSource.length - 2]);
+    console.log("headOfRowSpan:", [
+      ...headOfRowSpan,
+      copiedDataSource.length - 2,
+    ]);
     setDataSource(copiedDataSource);
   };
 
-  const handleDelete = (no,index) => {
-    console.log("delete Index:",index);
-    if(headOfRowSpan.includes(index) ){
-
+  const handleDelete = (no, index) => {
+    console.log("delete Index:", index);
+    if (headOfRowSpan.includes(index)) {
       const elementToRemove = index;
-      const newArray = headOfRowSpan.filter(item => item !== elementToRemove);
-      console.log("new HeadOfRowSpan#1:",newArray);
+      const newArray = headOfRowSpan.filter((item) => item !== elementToRemove);
+      console.log("new HeadOfRowSpan#1:", newArray);
       setHeadOfRowSpan(newArray);
-
     }
 
-    if(headOfRowSpan.includes(index-1) ){
-
-      const elementToRemove = index-1;
-      const newArray = headOfRowSpan.filter(item => item !== elementToRemove);
-      console.log("new HeadOfRowSpan#2:",newArray);
+    if (headOfRowSpan.includes(index - 1)) {
+      const elementToRemove = index - 1;
+      const newArray = headOfRowSpan.filter((item) => item !== elementToRemove);
+      console.log("new HeadOfRowSpan#2:", newArray);
       setHeadOfRowSpan(newArray);
-
     }
 
     const newData = dataSource.filter((item) => item.no !== no);
@@ -110,13 +121,13 @@ function App() {
           };
         }
         // These two are merged into above cell
-        if (headOfRowSpan.includes(index-1)) {
+        if (headOfRowSpan.includes(index - 1)) {
           return {
             rowSpan: 0,
           };
         }
         return {};
-      },      
+      },
     },
     {
       title: "Name",
@@ -127,9 +138,9 @@ function App() {
       title: "Action",
       dataIndex: "action",
       key: "action",
-      render: (_, record,index) =>
+      render: (_, record, index) =>
         dataSource.length >= 1 ? (
-          <a onClick={() => handleDelete(record.no,index)}>Delete</a>
+          <a onClick={() => handleDelete(record.no, index)}>Delete</a>
         ) : null,
       hidden: hideAction,
     },
@@ -157,7 +168,15 @@ function App() {
           <Content className="site-layout" style={{ padding: "0 50px" }}>
             <div style={{ padding: 24, height: "100%" }}>
               <div style={{ display: "block", textAlign: "right" }}>
-                <Button type="dashed" onClick={onHide}>
+                <Radio.Group value={size} onChange={handleSizeChange}>
+                  <Radio.Button value="large">Large</Radio.Button>
+                  <Radio.Button value="small">Small</Radio.Button>
+                </Radio.Group>
+                <Button
+                  type="dashed"
+                  onClick={onHide}
+                  style={{ marginLeft: 6 }}
+                >
                   {hideShowText}
                 </Button>
                 <ReactToPrint
@@ -194,7 +213,11 @@ function App() {
                 </Button>
               </div>
               <br />
-              <Table columns={columns} dataSource={dataSource} />
+              <Table
+                columns={columns}
+                dataSource={dataSource}
+                className={customStyle}
+              />
             </div>
           </Content>
           <Footer
