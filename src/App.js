@@ -190,7 +190,7 @@ function App() {
           >
             Table tennis list
           </Header>
-          <Content className="site-layout" style={{ padding: "0 50px" }}>
+          <Content className="site-layout" style={{ padding: "0 50px" , backgroundColor:"white"}}>
             <div style={{ padding: 24, height: "100%" }}>
               <div style={{ display: "block", textAlign: "right" }}>
                 <Radio.Group value={size} onChange={handleSizeChange}>
@@ -253,7 +253,8 @@ function App() {
                   <Table
                     columns={columns}
                     dataSource={dataSource}
-                    // className={customStyle}
+                    className="tableBorder"
+                    bordered
                   />
                 </div>
               </div>
@@ -262,6 +263,10 @@ function App() {
           <Footer
             style={{
               textAlign: "center",
+              position: "fixed",
+              bottom: 0,
+              height: "100px",
+              width: "100%"
             }}
           >
             桌球王 ©2023 Created by 阿瑜
