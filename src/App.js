@@ -1,5 +1,13 @@
 import "./App.css";
-import { Table, Button, Layout, Input, ConfigProvider, Radio } from "antd";
+import {
+  Table,
+  Button,
+  Layout,
+  Input,
+  ConfigProvider,
+  Radio,
+  Slider,
+} from "antd";
 import React, { useState, useRef } from "react";
 import ReactToPrint from "react-to-print";
 import { PrinterOutlined } from "@ant-design/icons";
@@ -14,15 +22,29 @@ function App() {
   const [headOfRowSpan, setHeadOfRowSpan] = useState([]);
   const [customStyle, setCustomStyle] = useState("py-style-2");
   const [size, setSize] = useState("small");
+  const [paddingValue, setPaddingValue] = useState(5);
+
+  const sliderStyle = {
+    display: "inline-block",
+    height: 300,
+    textAlign: "left",
+  };
 
   let componentRef = useRef();
+
+  const onChangeSlider = (newValue) => {
+    console.log("Slider Value:", newValue);
+    setPaddingValue(newValue);
+  };
 
   const handleSizeChange = (e) => {
     setSize(e.target.value);
     if (e.target.value === "small") {
-      setCustomStyle("py-style-2");
+      // setCustomStyle("py-style-2");
+      setPaddingValue(5);
     } else {
-      setCustomStyle("py-style-1");
+      // setCustomStyle("py-style-1");
+      setPaddingValue(50);
     }
   };
 
@@ -133,6 +155,9 @@ function App() {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text, record) => (
+        <div style={{ padding: `${paddingValue}px` }}>{text}</div>
+      ),
     },
     {
       title: "Action",
@@ -213,11 +238,25 @@ function App() {
                 </Button>
               </div>
               <br />
-              <Table
-                columns={columns}
-                dataSource={dataSource}
-                className={customStyle}
-              />
+
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <div style={{ flex: 0.5 }}>
+                  <Slider
+                    min={20}
+                    max={50}
+                    onChange={onChangeSlider}
+                    value={paddingValue}
+                    vertical
+                  />
+                </div>
+                <div style={{ flex: 20 }}>
+                  <Table
+                    columns={columns}
+                    dataSource={dataSource}
+                    // className={customStyle}
+                  />
+                </div>
+              </div>
             </div>
           </Content>
           <Footer
