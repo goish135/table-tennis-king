@@ -1,138 +1,179 @@
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  arrayMove,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import React, { useState } from "react";
-import { Table, Layout } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
-const { Header, Content, Footer } = Layout;
-const columns = [
+import {
+  Table,
+  Layout,
+  Form,
+  Input,
+  InputNumber,
+  Popconfirm,
+  Typography,
+} from "antd";
+
+const originData = [
   {
-    key: "sort",
+    key: "1",
+    no: "1",
+    name: "貝吉塔",
   },
   {
-    title: "NO#",
-    dataIndex: "no",
+    key: "2",
+    no: "1",
+    name: "表哥",
   },
   {
-    title: "Name",
-    dataIndex: "name",
+    key: "3",
+    no: "2",
+    name: "Engine",
+  },
+  {
+    key: "4",
+    no: "2",
+    name: "馬鈴薯",
+  },
+  {
+    key: "5",
+    no: "3",
+    name: "Allen",
+  },
+  {
+    key: "6",
+    no: "3",
+    name: "毅力",
   },
 ];
 
-const Row = ({ children, ...props }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props["data-row-key"],
-  });
-  const style = {
-    ...props.style,
-    transform: CSS.Transform.toString(
-      transform && {
-        ...transform,
-        scaleY: 1,
-      },
-    ),
-    transition,
-    ...(isDragging
-      ? {
-          position: "relative",
-          zIndex: 9999,
-        }
-      : {}),
-  };
+const { Header, Content, Footer } = Layout;
+
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
   return (
-    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
-      {React.Children.map(children, (child) => {
-        if (child.key === "sort") {
-          return React.cloneElement(child, {
-            children: (
-              <MenuOutlined
-                ref={setActivatorNodeRef}
-                style={{
-                  touchAction: "none",
-                  cursor: "move",
-                }}
-                {...listeners}
-              />
-            ),
-          });
-        }
-        return child;
-      })}
-    </tr>
+    <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: true,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+          {inputNode}
+        </Form.Item>
+      ) : (
+        children
+      )}
+    </td>
   );
 };
-
 const App = () => {
-  const [dataSource, setDataSource] = useState([
-    {
-      key: "1",
-      no: "",
-      name: "貝吉塔",
-    },
-    {
-      key: "2",
-      no: "",
-      name: "表哥",
-    },
-    {
-      key: "3",
-      no: "",
-      name: "Engine",
-    },
-    {
-      key: "4",
-      no: "",
-      name: "馬鈴薯",
-    },
-    {
-      key: "5",
-      no: "",
-      name: "Allen",
-    },
-    {
-      key: "6",
-      no: "",
-      name: "毅力",
-    },
-  ]);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        // https://docs.dndkit.com/api-documentation/sensors/pointer#activation-constraints
-        distance: 1,
-      },
-    }),
-  );
-
-  const onDragEnd = ({ active, over }) => {
-    if (active.id !== over?.id) {
-      setDataSource((prev) => {
-        const activeIndex = prev.findIndex((i) => i.key === active.id);
-        const overIndex = prev.findIndex((i) => i.key === over?.id);
-        return arrayMove(prev, activeIndex, overIndex);
-      });
+  const [form] = Form.useForm();
+  const [data, setData] = useState(originData);
+  const [editingKey, setEditingKey] = useState("");
+  const isEditing = (record) => record.key === editingKey;
+  const edit = (record) => {
+    form.setFieldsValue({
+      name: "",
+      age: "",
+      address: "",
+      ...record,
+    });
+    setEditingKey(record.key);
+  };
+  const cancel = () => {
+    setEditingKey("");
+  };
+  const save = async (key) => {
+    try {
+      const row = await form.validateFields();
+      const newData = [...data];
+      const index = newData.findIndex((item) => key === item.key);
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+        });
+        setData(newData);
+        setEditingKey("");
+      } else {
+        newData.push(row);
+        setData(newData);
+        setEditingKey("");
+      }
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
     }
   };
+  const columnsEdit = [
+    {
+      title: "NO#",
+      dataIndex: "no",
+      editable: "true",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      editable: "true",
+    },
+    {
+      title: "operation",
+      dataIndex: "operation",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Save
+            </Typography.Link>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+              <a>Cancel</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <Typography.Link
+            disabled={editingKey !== ""}
+            onClick={() => edit(record)}
+          >
+            Edit
+          </Typography.Link>
+        );
+      },
+    },
+  ];
+
+  const mergedColumns = columnsEdit.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType: col.dataIndex === "age" ? "number" : "text",
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
 
   return (
     <div className="App">
@@ -143,7 +184,7 @@ const App = () => {
             textAlign: "center",
           }}
         >
-          Table tennis list - Drag &amp; Drop
+          Table tennis list - Edit rows
         </Header>
       </Layout>
       <Content
@@ -151,29 +192,22 @@ const App = () => {
         style={{ padding: "0 50px", backgroundColor: "white" }}
       >
         <div style={{ padding: 24, height: "100%" }}>
-          <DndContext
-            sensors={sensors}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={onDragEnd}
-          >
-            <SortableContext
-              // rowKey array
-              items={dataSource.map((i) => i.key)}
-              strategy={verticalListSortingStrategy}
-            >
-              <Table
-                components={{
-                  body: {
-                    row: Row,
-                  },
-                }}
-                rowKey="key"
-                columns={columns}
-                dataSource={dataSource}
-                pagination={false}
-              />
-            </SortableContext>
-          </DndContext>
+          <Form form={form} component={false}>
+            <Table
+              components={{
+                body: {
+                  cell: EditableCell,
+                },
+              }}
+              bordered
+              dataSource={data}
+              columns={mergedColumns}
+              rowClassName="editable-row"
+              pagination={{
+                onChange: cancel,
+              }}
+            />
+          </Form>
         </div>
       </Content>
       <Footer
