@@ -1,280 +1,193 @@
-import "./App.css";
 import {
-  Table,
-  Button,
-  Layout,
-  Input,
-  ConfigProvider,
-  Radio,
-  Slider,
-} from "antd";
-import React, { useState, useRef } from "react";
-import ReactToPrint from "react-to-print";
-import { PrinterOutlined } from "@ant-design/icons";
-
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+  SortableContext,
+  arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import React, { useState } from "react";
+import { Table, Layout } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
+const columns = [
+  {
+    key: "sort",
+  },
+  {
+    title: "NO#",
+    dataIndex: "no",
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+  },
+];
 
-function App() {
-  const data = [];
-  const [dataSource, setDataSource] = useState(data);
-  const [hideAction, setHideAction] = useState(false);
-  const [hideShowText, setHideShowText] = useState("Hide");
-  const [headOfRowSpan, setHeadOfRowSpan] = useState([]);
-  const [customStyle, setCustomStyle] = useState("py-style-2");
-  const [size, setSize] = useState("small");
-  const [paddingValue, setPaddingValue] = useState(5);
-
-  const sliderStyle = {
-    display: "inline-block",
-    height: 300,
-    textAlign: "left",
-  };
-
-  let componentRef = useRef();
-
-  const onChangeSlider = (newValue) => {
-    console.log("Slider Value:", newValue);
-    setPaddingValue(newValue);
-  };
-
-  const handleSizeChange = (e) => {
-    setSize(e.target.value);
-    if (e.target.value === "small") {
-      // setCustomStyle("py-style-2");
-      setPaddingValue(5);
-    } else {
-      // setCustomStyle("py-style-1");
-      setPaddingValue(50);
-    }
-  };
-
-  const onHide = () => {
-    console.log("click Hide");
-    if (hideAction) {
-      setHideShowText("Hide");
-    } else {
-      setHideShowText("Show");
-    }
-    setHideAction(!hideAction);
-  };
-
-  const handleAdd = () => {
-    let initMax = 0;
-
-    for (let i = 0; i < dataSource.length; i++) {
-      initMax = Math.max(initMax, dataSource[i].no);
-    }
-
-    const newData = {
-      key: Math.random(),
-      no: initMax + 1,
-      name: ``,
-      action: <a>Delete</a>,
-    };
-    setDataSource([...dataSource, newData]);
-  };
-
-  const handleAdd2 = () => {
-    let initMax = 0;
-
-    for (let i = 0; i < dataSource.length; i++) {
-      initMax = Math.max(initMax, dataSource[i].no);
-    }
-
-    var copiedDataSource = dataSource.slice();
-    const newData1 = {
-      key: Math.random(),
-      no: initMax + 1,
-      name: ``,
-      action: <a>Delete</a>,
-    };
-    const newData2 = {
-      key: Math.random(),
-      no: initMax + 1,
-      name: ``,
-      action: <a>Delete</a>,
-    };
-
-    copiedDataSource.push(newData1, newData2);
-    console.log("copiedDataSource length:", copiedDataSource.length);
-
-    setHeadOfRowSpan([...headOfRowSpan, copiedDataSource.length - 2]);
-    console.log("headOfRowSpan:", [
-      ...headOfRowSpan,
-      copiedDataSource.length - 2,
-    ]);
-    setDataSource(copiedDataSource);
-  };
-
-  const handleDelete = (no, index) => {
-    console.log("delete Index:", index);
-    if (headOfRowSpan.includes(index)) {
-      const elementToRemove = index;
-      const newArray = headOfRowSpan.filter((item) => item !== elementToRemove);
-      console.log("new HeadOfRowSpan#1:", newArray);
-      setHeadOfRowSpan(newArray);
-    }
-
-    if (headOfRowSpan.includes(index - 1)) {
-      const elementToRemove = index - 1;
-      const newArray = headOfRowSpan.filter((item) => item !== elementToRemove);
-      console.log("new HeadOfRowSpan#2:", newArray);
-      setHeadOfRowSpan(newArray);
-    }
-
-    const newData = dataSource.filter((item) => item.no !== no);
-
-    setDataSource(newData);
-  };
-
-  const onChange = (e) => {
-    console.log("Change:", e.target.value);
-  };
-
-  const columns = [
-    {
-      title: "No#",
-      dataIndex: "no",
-      key: "no",
-      onCell: (_, index) => {
-        if (headOfRowSpan.includes(index)) {
-          return {
-            rowSpan: 2,
-          };
-        }
-        // These two are merged into above cell
-        if (headOfRowSpan.includes(index - 1)) {
-          return {
-            rowSpan: 0,
-          };
-        }
-        return {};
+const Row = ({ children, ...props }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props["data-row-key"],
+  });
+  const style = {
+    ...props.style,
+    transform: CSS.Transform.toString(
+      transform && {
+        ...transform,
+        scaleY: 1,
       },
+    ),
+    transition,
+    ...(isDragging
+      ? {
+          position: "relative",
+          zIndex: 9999,
+        }
+      : {}),
+  };
+  return (
+    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
+      {React.Children.map(children, (child) => {
+        if (child.key === "sort") {
+          return React.cloneElement(child, {
+            children: (
+              <MenuOutlined
+                ref={setActivatorNodeRef}
+                style={{
+                  touchAction: "none",
+                  cursor: "move",
+                }}
+                {...listeners}
+              />
+            ),
+          });
+        }
+        return child;
+      })}
+    </tr>
+  );
+};
+
+const App = () => {
+  const [dataSource, setDataSource] = useState([
+    {
+      key: "1",
+      no: "",
+      name: "貝吉塔",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text, record) => (
-        <div style={{ padding: `${paddingValue}px` }}>{text}</div>
-      ),
+      key: "2",
+      no: "",
+      name: "表哥",
     },
     {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      render: (_, record, index) =>
-        dataSource.length >= 1 ? (
-          <a onClick={() => handleDelete(record.no, index)}>Delete</a>
-        ) : null,
-      hidden: hideAction,
+      key: "3",
+      no: "",
+      name: "Engine",
     },
-  ].filter((item) => !item.hidden);
+    {
+      key: "4",
+      no: "",
+      name: "馬鈴薯",
+    },
+    {
+      key: "5",
+      no: "",
+      name: "Allen",
+    },
+    {
+      key: "6",
+      no: "",
+      name: "毅力",
+    },
+  ]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        // https://docs.dndkit.com/api-documentation/sensors/pointer#activation-constraints
+        distance: 1,
+      },
+    }),
+  );
+
+  const onDragEnd = ({ active, over }) => {
+    if (active.id !== over?.id) {
+      setDataSource((prev) => {
+        const activeIndex = prev.findIndex((i) => i.key === active.id);
+        const overIndex = prev.findIndex((i) => i.key === over?.id);
+        return arrayMove(prev, activeIndex, overIndex);
+      });
+    }
+  };
 
   return (
     <div className="App">
-      <ConfigProvider
-        theme={{
-          token: {
-            fontFamily: "fantasy",
-            fontSize: 20,
-          },
+      <Layout>
+        <Header
+          style={{
+            color: "white",
+            textAlign: "center",
+          }}
+        >
+          Table tennis list - Drag &amp; Drop
+        </Header>
+      </Layout>
+      <Content
+        className="site-layout"
+        style={{ padding: "0 50px", backgroundColor: "white" }}
+      >
+        <div style={{ padding: 24, height: "100%" }}>
+          <DndContext
+            sensors={sensors}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext
+              // rowKey array
+              items={dataSource.map((i) => i.key)}
+              strategy={verticalListSortingStrategy}
+            >
+              <Table
+                components={{
+                  body: {
+                    row: Row,
+                  },
+                }}
+                rowKey="key"
+                columns={columns}
+                dataSource={dataSource}
+                pagination={false}
+              />
+            </SortableContext>
+          </DndContext>
+        </div>
+      </Content>
+      <Footer
+        style={{
+          textAlign: "center",
+          position: "fixed",
+          bottom: 0,
+          height: "100px",
+          width: "100%",
         }}
       >
-        <Layout ref={(el) => (componentRef = el)}>
-          <Header
-            style={{
-              color: "white",
-              textAlign: "center",
-            }}
-          >
-            Table tennis list
-          </Header>
-          <Content className="site-layout" style={{ padding: "0 50px" , backgroundColor:"white"}}>
-            <div style={{ padding: 24, height: "100%" }}>
-              <div style={{ display: "block", textAlign: "right" }}>
-                <Radio.Group value={size} onChange={handleSizeChange}>
-                  <Radio.Button value="large">Large</Radio.Button>
-                  <Radio.Button value="small">Small</Radio.Button>
-                </Radio.Group>
-                <Button
-                  type="dashed"
-                  onClick={onHide}
-                  style={{ marginLeft: 6 }}
-                >
-                  {hideShowText}
-                </Button>
-                <ReactToPrint
-                  trigger={() => (
-                    <Button
-                      style={{ marginLeft: 6 }}
-                      icon={<PrinterOutlined />}
-                    >
-                      Print
-                    </Button>
-                  )}
-                  content={() => componentRef}
-                />
-              </div>
-
-              <div style={{ width: "100%" }}>
-                <div style={{ display: "inline-block" }}>Team Name:&nbsp;</div>
-                <div style={{ display: "inline-block" }}>
-                  <Input showCount maxLength={20} onChange={onChange} />
-                </div>
-                <br />
-                <br />
-                <div style={{ display: "inline-block" }}>Team Lead:&nbsp;</div>
-                <div style={{ display: "inline-block" }}>
-                  <Input showCount maxLength={20} onChange={onChange} />
-                </div>
-                <br />
-                <br />
-                <Button type="primary" onClick={handleAdd}>
-                  +1 Player
-                </Button>
-                <Button style={{ marginLeft: 6 }} onClick={handleAdd2}>
-                  +2 Player
-                </Button>
-              </div>
-              <br />
-
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                <div style={{ flex: 0.5 }}>
-                  <Slider
-                    min={20}
-                    max={50}
-                    onChange={onChangeSlider}
-                    value={paddingValue}
-                    vertical
-                  />
-                </div>
-                <div style={{ flex: 20 }}>
-                  <Table
-                    columns={columns}
-                    dataSource={dataSource}
-                    className="tableBorder"
-                    bordered
-                  />
-                </div>
-              </div>
-            </div>
-          </Content>
-          <Footer
-            style={{
-              textAlign: "center",
-              position: "fixed",
-              bottom: 0,
-              height: "100px",
-              width: "100%"
-            }}
-          >
-            桌球王 ©2023 Created by 阿瑜
-          </Footer>
-        </Layout>
-      </ConfigProvider>
+        桌球王 ©2023 Created by 阿瑜
+      </Footer>
     </div>
   );
-}
-
+};
 export default App;
