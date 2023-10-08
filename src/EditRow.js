@@ -7,7 +7,11 @@ import {
   InputNumber,
   Popconfirm,
   Typography,
+  Button,
 } from "antd";
+
+import { Link } from "react-router-dom";
+import { RollbackOutlined } from "@ant-design/icons";
 
 const originData = [
   {
@@ -192,6 +196,11 @@ const App = () => {
         style={{ padding: "0 50px", backgroundColor: "white" }}
       >
         <div style={{ padding: 24, height: "100%" }}>
+          <Link to="/" style={{ color: "#bae0ff" }}>
+            <Button type="primary" icon={<RollbackOutlined />}>
+              Home
+            </Button>
+          </Link>
           <Form form={form} component={false}>
             <Table
               components={{

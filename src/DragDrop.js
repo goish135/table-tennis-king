@@ -13,8 +13,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React, { useState } from "react";
-import { Table, Layout } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import { Table, Layout, Button } from "antd";
+import { Link } from "react-router-dom";
+import { MenuOutlined, RollbackOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
 const columns = [
   {
@@ -151,6 +152,12 @@ const DragDrop = () => {
         style={{ padding: "0 50px", backgroundColor: "white" }}
       >
         <div style={{ padding: 24, height: "100%" }}>
+          <Link to="/" style={{ color: "#bae0ff" }}>
+            <Button type="primary" icon={<RollbackOutlined />}>
+              Home
+            </Button>
+          </Link>
+
           <DndContext
             sensors={sensors}
             modifiers={[restrictToVerticalAxis]}

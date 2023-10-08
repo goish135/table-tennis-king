@@ -1,7 +1,15 @@
-import { Layout } from "antd";
+import { Layout, Result, Button } from "antd";
 import { Link } from "react-router-dom";
+import "./App.css";
+import { SmileOutlined, HomeOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
-
+const styleCol = { marginLeft: "0px", width: "25%", display: "inline-block" };
+const styleCol2 = {
+  width: "50%",
+  display: "inline-block",
+  textAlign: "center",
+};
+const styleRow = { width: "100%" };
 const Menu = () => {
   return (
     <div className="App">
@@ -10,27 +18,43 @@ const Menu = () => {
           style={{
             color: "white",
             textAlign: "center",
+            fontSize: "24px",
           }}
         >
           Table tennis list - Menu
         </Header>
       </Layout>
-      <Content
-        className="site-layout"
-        style={{
-          padding: "0 50px",
-          backgroundColor: "white",
-          textAlign: "center",
-        }}
-      >
-        <br />
-        <br />
-        <Link to="/editrow">Edit Rows</Link>
 
-        <br />
-        <br />
-        <Link to="/dragdrop">Drag N Drop</Link>
+      <Content>
+        <div style={styleCol}>
+          <div class="card">
+            <h2>Feature</h2>
+            <p>
+              <Link to="/editrow" style={{ color: "#bae0ff" }}>
+                Edit Rows
+              </Link>
+            </p>
+          </div>
+
+          <div class="card">
+            <h2>Feature</h2>
+            <p>
+              <Link to="/dragdrop" style={{ color: "#bae0ff" }}>
+                Drag N Drop
+              </Link>
+            </p>
+          </div>
+        </div>
+        <div style={styleCol2}>
+          <Result
+            icon={<HomeOutlined />}
+            title="Home Page"
+            // extra={<Button type="primary">Next</Button>}
+            style={{ display: "inline-block" }}
+          />
+        </div>
       </Content>
+
       <Footer
         style={{
           textAlign: "center",
