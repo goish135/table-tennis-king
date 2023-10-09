@@ -40,7 +40,7 @@ const Menu = () => {
             <div class="card">
               <h2>Feature</h2>
               <p>
-                <Link to="/editrow" style={{ color: "#bae0ff" }}>
+                <Link to="/editrow" style={{ color: "#69b1ff" }}>
                   Edit Rows
                 </Link>
               </p>
@@ -49,7 +49,7 @@ const Menu = () => {
             <div class="card">
               <h2>Feature</h2>
               <p>
-                <Link to="/dragdrop" style={{ color: "#bae0ff" }}>
+                <Link to="/dragdrop" style={{ color: "#69b1ff" }}>
                   Drag N Drop
                 </Link>
               </p>
@@ -57,7 +57,7 @@ const Menu = () => {
             <div class="card">
               <h2>Main</h2>
               <p>
-                <Link to="/print" style={{ color: "#bae0ff" }}>
+                <Link to="/print" style={{ color: "#69b1ff" }}>
                   Print
                 </Link>
               </p>
