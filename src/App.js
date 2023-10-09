@@ -7,7 +7,7 @@ import Print from "./Print";
 
 export default function App() {
   return (
-    <BrowserRouter basename={"/TTK/"}>
+    <BrowserRouter basename={"/table-tennis-king/"}>
       <Routes>
         <Route path="/" element={<Menu />} />
         <Route path="/editrow" element={<EditRow />} />
