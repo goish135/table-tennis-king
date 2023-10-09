@@ -267,7 +267,7 @@ function Print() {
                   <Table
                     columns={columns}
                     dataSource={dataSource}
-                    className="tableBorder"
+                    // className="tableBorder"
                     bordered
                   />
                 </div>
@@ -279,7 +279,6 @@ function Print() {
               textAlign: "center",
               position: "fixed",
               bottom: 0,
-              height: "100px",
               width: "100%",
             }}
           >
