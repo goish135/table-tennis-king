@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/table-tennis-king/static/css/main.f1000b90.css",
-    "main.js": "/table-tennis-king/static/js/main.be32e44e.js",
+    "main.css": "/table-tennis-king/static/css/main.cd14e47f.css",
+    "main.js": "/table-tennis-king/static/js/main.58c79a27.js",
     "static/js/787.5531840c.chunk.js": "/table-tennis-king/static/js/787.5531840c.chunk.js",
     "service-worker.js": "/table-tennis-king/service-worker.js",
     "index.html": "/table-tennis-king/index.html",
-    "main.f1000b90.css.map": "/table-tennis-king/static/css/main.f1000b90.css.map",
-    "main.be32e44e.js.map": "/table-tennis-king/static/js/main.be32e44e.js.map",
+    "main.cd14e47f.css.map": "/table-tennis-king/static/css/main.cd14e47f.css.map",
+    "main.58c79a27.js.map": "/table-tennis-king/static/js/main.58c79a27.js.map",
     "787.5531840c.chunk.js.map": "/table-tennis-king/static/js/787.5531840c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f1000b90.css",
-    "static/js/main.be32e44e.js"
+    "static/css/main.cd14e47f.css",
+    "static/js/main.58c79a27.js"
   ]
 }
