@@ -1,3 +1,7 @@
+See this to get more detail: 
+https://ithelp.ithome.com.tw/users/20111516/ironman/6670
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
